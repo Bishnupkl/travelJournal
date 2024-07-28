@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const util = require('util');
 const Trip = mongoose.model('Trip');
+const callbackify = util.callbackify;
 
 // Get all trips with pagination
 const getAllTrips = function (req, res) {
@@ -32,7 +33,10 @@ const getAllTrips = function (req, res) {
         res.status(400).json({ message: 'limit could not be more than 7' });
         return;
     } else {
-        util.callbackify(() => Trip.find().skip(offset).limit(limit).exec())((error, trips) => {
+        const findTripsWithCallback = callbackify(function() {
+            return Trip.find().skip(offset).limit(limit).exec();
+        });
+        findTripsWithCallback(function(error, trips) {
             if (error)
                 res.status(500).json({ message: error.message });
             else
@@ -44,7 +48,10 @@ const getAllTrips = function (req, res) {
 // Get one trip by ID
 const getOneTrip = function (req, res) {
     let id = req.params.id;
-    util.callbackify(() => Trip.findById(id).exec())((error, trip) => {
+    const findTripByIdWithCallback = callbackify(function() {
+        return Trip.findById(id).exec();
+    });
+    findTripByIdWithCallback(function(error, trip) {
         if (error)
             res.status(400).json({ message: error.message });
         else if (trip) {
@@ -63,7 +70,10 @@ const createTrip = function (req, res) {
         hotel: req.body.hotel,
         gallery: req.body.gallery
     };
-    util.callbackify(() => Trip.create(newTrip))((error, response) => {
+    const createTripWithCallback = callbackify(function() {
+        return Trip.create(newTrip);
+    });
+    createTripWithCallback(function(error, response) {
         if (error)
             res.status(500).json({ message: error.message });
         else
@@ -74,7 +84,10 @@ const createTrip = function (req, res) {
 // Delete a trip by ID
 const deleteTrip = function (req, res) {
     let id = req.params.id;
-    util.callbackify(() => Trip.findByIdAndDelete(id).exec())((error, response) => {
+    const deleteTripByIdWithCallback = callbackify(function() {
+        return Trip.findByIdAndDelete(id).exec();
+    });
+    deleteTripByIdWithCallback(function(error, response) {
         if (error)
             res.status(400).json({ message: error.message });
         else if (response) {
@@ -88,7 +101,10 @@ const deleteTrip = function (req, res) {
 // Get gallery for a particular trip by ID
 const getTripGallery = function (req, res) {
     let id = req.params.id;
-    util.callbackify(() => Trip.findById(id).select('gallery').exec())((error, trip) => {
+    const findTripGalleryWithCallback = callbackify(function() {
+        return Trip.findById(id).select('gallery').exec();
+    });
+    findTripGalleryWithCallback(function(error, trip) {
         if (error)
             res.status(400).json({ message: error.message });
         else if (trip) {
@@ -106,12 +122,15 @@ const addGalleryEntry = function (req, res) {
         place: req.body.place,
         photo: req.body.photo
     };
-    util.callbackify(() => Trip.findById(id).exec())((error, trip) => {
+    const findTripByIdWithCallback = callbackify(function() {
+        return Trip.findById(id).exec();
+    });
+    findTripByIdWithCallback(function(error, trip) {
         if (error) {
             res.status(400).json({ message: error.message });
         } else if (trip) {
             trip.gallery.push(newGalleryEntry);
-            trip.save((saveError, savedTrip) => {
+            trip.save(function(saveError, savedTrip) {
                 if (saveError) {
                     res.status(500).json({ message: saveError.message });
                 } else {
@@ -128,7 +147,10 @@ const addGalleryEntry = function (req, res) {
 const getGalleryEntry = function (req, res) {
     let tripId = req.params.tripId;
     let entryId = req.params.entryId;
-    util.callbackify(() => Trip.findById(tripId).select('gallery').exec())((error, trip) => {
+    const findTripGalleryWithCallback = callbackify(function() {
+        return Trip.findById(tripId).select('gallery').exec();
+    });
+    findTripGalleryWithCallback(function(error, trip) {
         if (error) {
             res.status(400).json({ message: error.message });
         } else if (trip) {
@@ -148,7 +170,10 @@ const getGalleryEntry = function (req, res) {
 const updateGalleryEntry = function (req, res) {
     let tripId = req.params.tripId;
     let entryId = req.params.entryId;
-    util.callbackify(() => Trip.findById(tripId).exec())((error, trip) => {
+    const findTripByIdWithCallback = callbackify(function() {
+        return Trip.findById(tripId).exec();
+    });
+    findTripByIdWithCallback(function(error, trip) {
         if (error) {
             res.status(400).json({ message: error.message });
         } else if (trip) {
@@ -156,7 +181,7 @@ const updateGalleryEntry = function (req, res) {
             if (galleryEntry) {
                 galleryEntry.place = req.body.place || galleryEntry.place;
                 galleryEntry.photo = req.body.photo || galleryEntry.photo;
-                trip.save((saveError, savedTrip) => {
+                trip.save(function(saveError, savedTrip) {
                     if (saveError) {
                         res.status(500).json({ message: saveError.message });
                     } else {
@@ -176,14 +201,17 @@ const updateGalleryEntry = function (req, res) {
 const deleteGalleryEntry = function (req, res) {
     let tripId = req.params.tripId;
     let entryId = req.params.entryId;
-    util.callbackify(() => Trip.findById(tripId).exec())((error, trip) => {
+    const findTripByIdWithCallback = callbackify(function() {
+        return Trip.findById(tripId).exec();
+    });
+    findTripByIdWithCallback(function(error, trip) {
         if (error) {
             res.status(400).json({ message: error.message });
         } else if (trip) {
             const galleryEntry = trip.gallery.id(entryId);
             if (galleryEntry) {
                 galleryEntry.remove();
-                trip.save((saveError, savedTrip) => {
+                trip.save(function(saveError, savedTrip) {
                     if (saveError) {
                         res.status(500).json({ message: saveError.message });
                     } else {
