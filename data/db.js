@@ -19,16 +19,12 @@ mongoose.connection.on("error", function () {
 })
 
 process.on("SIGINT", function () {
-    // console.log("SIGINT called"); //to showing the signle interrupters
     mongooseDisConnectWithCallback(function () {
-        // console.log("Mongoose disconnected by app termination");
         process.exit(0);
     });
 })
 process.on("SIGTERM", function () {
-    // console.log("SIGTERM called"); //to showing the signle interrupters
     mongooseClientConnect(function () {
-        // console.log("Mongoose disconnected by app termination");
         process.exit(0);
     });
 })

@@ -1,4 +1,4 @@
-// controllers/tripController.js
+
 const mongoose = require('mongoose');
 const util = require('util');
 const Trip = mongoose.model('Trip');
@@ -92,6 +92,30 @@ const deleteTrip = function (req, res) {
             res.status(400).json({ message: error.message });
         else if (response) {
             res.status(200).json(response);
+        } else {
+            res.status(400).json({ message: 'trip not found' });
+        }
+    });
+}
+
+
+// Update a trip by ID
+const updateTrip = function (req, res) {
+    let id = req.params.id;
+    const updatedTrip = {
+        country: req.body.country,
+        airport: req.body.airport,
+        hotel: req.body.hotel,
+        gallery: req.body.gallery
+    };
+    const updateTripByIdWithCallback = callbackify(function() {
+        return Trip.findByIdAndUpdate(id, updatedTrip, { new: true }).exec();
+    });
+    updateTripByIdWithCallback(function(error, trip) {
+        if (error)
+            res.status(400).json({ message: error.message });
+        else if (trip) {
+            res.status(200).json(trip);
         } else {
             res.status(400).json({ message: 'trip not found' });
         }
@@ -232,6 +256,7 @@ module.exports = {
     getOneTrip,
     createTrip,
     deleteTrip,
+    updateTrip,
     getTripGallery,
     addGalleryEntry,
     getGalleryEntry,
