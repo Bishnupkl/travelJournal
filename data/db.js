@@ -1,7 +1,7 @@
 const mongoose= require("mongoose");
 require('dotenv').config();
 
-require("./tripmodel");
+require("./model/tripmodel");
 
 const callBackify=require("util").callbackify;
 const mongooseDisConnectWithCallback = callBackify(mongoose.disconnect);
