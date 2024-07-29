@@ -20,9 +20,15 @@ To Run this project need to do as following:
    GET- http://localhost:3000/trips
    POST - http://localhost:3000/trips
    GET - http://localhost:3000/trips/tripId
+   DELETE - http://localhost:3000/trips/tripId
+   PUT - http://localhost:3000/trips/tripId
    GET - http://http://localhost:3000/trips/tripId/gallery
    POST - http://localhost:3000/trips/tripId/gallery
-   GET- http://http://localhost:3000/trips/tripId/gallery/galleyId
+   GET- http://http://localhost:3000/trips/tripId/gallery/galleryId
+   POST- http://http://localhost:3000/trips/tripId/gallery/galleryId
+   PUT- http://http://localhost:3000/trips/tripId/gallery/galleryId
+   PATCH- http://http://localhost:3000/trips/tripId/gallery/galleryId
+   DELETE- http://http://localhost:3000/trips/tripId/gallery/galleryId
 
 
 
