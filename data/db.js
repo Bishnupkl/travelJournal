@@ -6,16 +6,16 @@ require("./model/tripmodel");
 const callBackify=require("util").callbackify;
 const mongooseDisConnectWithCallback = callBackify(mongoose.disconnect);
 
-mongoose.connect(process.env.MONGO_URI+process.env.DB_NAME);
+mongoose.connect(`${process.env.MONGO_URI}/${process.env.DB_NAME}`);
 mongoose.connection.on("connected", function () {
-    console.log("Mongoose connected to travelJournal");
+    console.log(`${process.env.DB_CONNECT} ${process.env.DB_NAME}`);
 })
 
 mongoose.connection.on("disconnected", function () {
-    console.log("Mongoose disconnected to travelJournal");
+    console.log(`${process.env.DB_DISCONNECT} ${process.env.DB_NAME}`);
 })
 mongoose.connection.on("error", function () {
-    console.log("Mongoose error");
+    console.log(`${process.env.DB_CONNECT_ERROR}`);
 })
 
 process.on("SIGINT", function () {
