@@ -17,18 +17,18 @@ To Run this project need to do as following:
 6. For importing db: mongoimport --db=traveljournal --collection=trips --file=data/trips.json --jsonArray
 7. npm start and run
 8. Some REST API to test taveljournal  are as follows:
-   GET- http://localhost:3000/trips
-   POST - http://localhost:3000/trips
-   GET - http://localhost:3000/trips/tripId
-   DELETE - http://localhost:3000/trips/tripId
-   PUT - http://localhost:3000/trips/tripId
-   GET - http://http://localhost:3000/trips/tripId/gallery
-   POST - http://localhost:3000/trips/tripId/gallery
-   GET- http://http://localhost:3000/trips/tripId/gallery/galleryId
-   POST- http://http://localhost:3000/trips/tripId/gallery/galleryId
-   PUT- http://http://localhost:3000/trips/tripId/gallery/galleryId
-   PATCH- http://http://localhost:3000/trips/tripId/gallery/galleryId
-   DELETE- http://http://localhost:3000/trips/tripId/gallery/galleryId
+   1. GET- http://localhost:3000/trips
+   2. POST - http://localhost:3000/trips
+   3. GET - http://localhost:3000/trips/tripId
+   4. DELETE - http://localhost:3000/trips/tripId
+   5. PUT - http://localhost:3000/trips/tripId
+   6. GET - http://http://localhost:3000/trips/tripId/gallery
+   7. POST - http://localhost:3000/trips/tripId/gallery
+   8. GET- http://http://localhost:3000/trips/tripId/gallery/galleryId
+   9. POST- http://http://localhost:3000/trips/tripId/gallery/galleryId
+   10. PUT- http://http://localhost:3000/trips/tripId/gallery/galleryId
+   11. PATCH- http://http://localhost:3000/trips/tripId/gallery/galleryId
+   12. DELETE- http://http://localhost:3000/trips/tripId/gallery/galleryId
 
 
 
