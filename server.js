@@ -8,6 +8,7 @@ app.use(express.json());
 
 app.use('/trips', tripRoutes);
 const PORT = process.env.PORT || 3000;
+const SERVER_MSG = process.env.SERVER_MSG || "Server is running on port";
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`${SERVER_MSG} ${PORT}`);
 });
