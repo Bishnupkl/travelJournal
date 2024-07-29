@@ -1,0 +1,76 @@
+[{
+	"_id": {
+		"$oid": "66a5cbfd95d701637332a041"
+	},
+	"country": "Nepal",
+	"airport": "Tribhuvan International Airport",
+	"hotel": "Everest Hotel",
+	"gallery": [
+		{
+			"place": "PasupatiNath",
+			"picture": "pasupatinath.jpg",
+			"_id": {
+				"$oid": "66a69434a68c0ae818502699"
+			}
+		},
+		{
+			"place": "Janakpur",
+			"picture": "Janaki.jpg",
+			"_id": {
+				"$oid": "66a69434a68c0ae81850269a"
+			}
+		}
+	],
+	"__v": 0
+},
+{
+	"_id": {
+		"$oid": "66a6c7fd39693d96973c3169"
+	},
+	"country": "India",
+	"airport": "Indira Gandhi International Airport",
+	"hotel": "The Oberoi ",
+	"gallery": [
+		{
+			"place": "Taj Mahal",
+			"picture": "tajmahal.jpg",
+			"_id": {
+				"$oid": "66a6ccea6889bb434375bd0f"
+			}
+		},
+		{
+			"place": "Lal Killa",
+			"picture": "lalkilla.jpg",
+			"_id": {
+				"$oid": "66a6ccea6889bb434375bd10"
+			}
+		}
+	],
+	"__v": 0
+},
+{
+	"_id": {
+		"$oid": "66a6c87139693d96973c316d"
+	},
+	"country": "United States",
+	"airport": "Dallas Fort International Airport",
+	"hotel": "Thompson Dallas",
+	"gallery": [
+		{
+			"place": "Dallas Museum of Art",
+			"picture": "dallasmuseum.jpg",
+			"_id": {
+				"$oid": "66a6cc746889bb434375bd0a"
+			}
+		},
+		{
+			"place": "Reunion Tower",
+			"picture": "reuniontower.jpg",
+			"_id": {
+				"$oid": "66a6cc746889bb434375bd0b"
+			}
+		}
+	],
+	"__v": 0
+}]
+
