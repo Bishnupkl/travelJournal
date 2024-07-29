@@ -84,7 +84,7 @@ const updateTripGallery = function (req, res) {
     let galleryID = req.params.galleryID;
     const updatedTripGallery = {
         'gallery.$.place': req.body.place,
-        'gallery.$.photo': req.body.photo
+        'gallery.$.picture': req.body.picture
     };
 
     const updateTripGalleryWithCallback = callbackify(function() {
@@ -118,7 +118,7 @@ const partialUpdateTripGallery = function (req, res) {
 
     const updateFields = {};
     if (req.body.place) updateFields['gallery.$.place'] = req.body.place;
-    if (req.body.picture) updateFields['gallery.$.photo'] = req.body.photo;
+    if (req.body.picture) updateFields['gallery.$.picture'] = req.body.picture;
     
     if (Object.keys(updateFields).length === 0) {
         return res.status(400).json({ message: 'No valid fields to update' });
