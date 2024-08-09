@@ -21,9 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(process.env.SUB_SET_ROUTE, router);
 
 
-app.use(express.json());
 
-app.use(process.env.URL_TRIPS, tripRoutes);
 const PORT = process.env.PORT || 3000;
 const SERVER_MSG = process.env.SERVER_MSG || "Server is running on port";
 app.listen(PORT, () => {
