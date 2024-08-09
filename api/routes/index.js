@@ -7,6 +7,6 @@ const usersRouter = require('./../components/users/users-routes')
 require('dotenv').config();
 
 router.use(process.env.URL_TRIPS, tripsRouter)
-// router.use(process.env.URL_USERS, usersRouter)
+router.use(process.env.URL_USERS, usersRouter)
 
 module.exports = router;
