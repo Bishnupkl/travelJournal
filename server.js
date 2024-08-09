@@ -1,8 +1,10 @@
 const express = require('express');
 const app = express();
-const db = require('./data/db');
-const tripRoutes = require('./routes/tripRoutes');
+const db = require('./api/data/db');
+const router = require('./api/routes');
 require('dotenv').config();
+
+
 
 
 app.use(process.env.URL_TRIPS, function (req, res, next) {
@@ -11,6 +13,14 @@ app.use(process.env.URL_TRIPS, function (req, res, next) {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   next();
 });
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
+
+
+app.use(process.env.SUB_SET_ROUTE, router);
+
+
 app.use(express.json());
 
 app.use(process.env.URL_TRIPS, tripRoutes);
