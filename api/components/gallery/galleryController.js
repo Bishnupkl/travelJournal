@@ -1,175 +1,186 @@
 const mongoose = require('mongoose');
-const util = require('util');
-const Trip = mongoose.model('Trip');
-const callbackify = util.callbackify;
+require('dotenv').config();
 
+const TRIP_MODEL = process.env.TRIP_MODEL;
+const Trip = mongoose.model(TRIP_MODEL);
 
-// Get gallery for a particular trip by ID
-const getTripGallerys = function (req, res) {
-    let id = req.params.id;
-    const findTripGalleryWithCallback = callbackify(function () {
-        return Trip.findById(id).select('gallery').exec();
-    });
-    findTripGalleryWithCallback(function (error, trip) {
-        if (error)
-            res.status(400).json({message: error.message});
-        else if (trip) {
-            res.status(200).json(trip.gallery);
-        } else {
-            res.status(400).json({message: 'trip not found'});
-        }
+const _findTripById = function (id) {
+    console.log(id);
+    
+    return Trip.findById(id).exec();
+}
+
+const _saveTrip = function (trip) {
+    return trip.save();
+}
+
+const _getIfFoundTrip = function (trip) {
+    const error = {
+        status: process.env.NOT_FOUND_CODE,
+        message: process.env.NOT_FOUND_MESSAGE
+    }
+    return new Promise((resolve, reject) => {
+        if (trip) resolve(trip);
+        else reject(error);
     });
 }
 
-// Add a gallery  to a particular trip
-const addTripGallery = function (req, res) {
-    let tripId = req.params.id;
-    const newTripGallery = {
+const _getIfFoundGallery = function (gallery) {
+    const error = {
+        status: process.env.NOT_FOUND_CODE,
+        message: process.env.NOT_FOUND_MESSAGE
+    }
+    return new Promise((resolve, reject) => {
+        if (gallery) resolve(gallery);
+        else reject(error);
+    });
+}
+
+const _setDefaultResponse = function (statusCode, data) {
+    return { status: statusCode, data };
+}
+
+const _setErrorResponse = function (response, statusCode, message) {
+    response.status = statusCode;
+    response.data = message;
+}
+
+const _sendResponse = function (res, response) {
+    console.log(response);
+    res.status(parseInt(response.status)).json(response.data);
+}
+
+const _createNewGalleryObject = function (req) {
+    return {
         place: req.body.place,
         picture: req.body.picture
     };
-    
-    const addTripGalleryWithCallback = callbackify(function () {
-        return Trip.findById(tripId).exec();
-    });
-    
-    addTripGalleryWithCallback(function (error, trip) {
-        if (error) {
-            res.status(400).json({message: error.message});
-        } else if (trip) {
-            trip.gallery.push(newTripGallery);
-            const saveTripWithCallback = callbackify(function () {
-                return trip.save();
-            });
-            
-            saveTripWithCallback(function (saveError, updatedTrip) {
-                if (saveError) {
-                    res.status(500).json({message: saveError.message});
-                } else {
-                    res.status(201).json(updatedTrip.gallery[updatedTrip.gallery.length - 1]);
-                }
-            });
-        } else {
-            res.status(404).json({message: 'Trip not found'});
-        }
+}
+
+const _addGalleryToTrip = function (trip, gallery) {
+    return new Promise(resolve => {
+        trip.gallery.push(gallery);
+        resolve(trip);
     });
 }
 
-// Get a gallery  by trip ID and gallery ID
-const getTripGallery = function (req, res) {
-    let tripId = req.params.tripId;
-    let galleryID = req.params.galleryID;
-    const findTripGalleryWithCallback = callbackify(function () {
-        return Trip.findById(tripId).select('gallery').exec();
-    });
-    findTripGalleryWithCallback(function (error, trip) {
-        if (error) {
-            res.status(400).json({message: error.message});
-        } else if (trip) {
-            const Tripgallery = trip.gallery.id(galleryID);
-            if (Tripgallery) {
-                res.status(200).json(Tripgallery);
-            } else {
-                res.status(400).json({message: 'Trip gallery  not found'});
-            }
-        } else {
-            res.status(400).json({message: 'trip not found'});
-        }
+const _deleteGalleryFromTrip = function (trip, galleryId) {
+    return new Promise(resolve => {
+        trip.gallery.pull(galleryId);
+        resolve(trip);
     });
 }
 
-// Update a gallery  by trip ID and gallery ID
-const updateTripGallery = function (req, res) {
-    let tripId = req.params.tripId;
-    let galleryID = req.params.galleryID;
-    const updatedTripGallery = {
-        'gallery.$.place': req.body.place,
-        'gallery.$.picture': req.body.picture
-    };
-    
-    const updateTripGalleryWithCallback = callbackify(function () {
-        return Trip.findOneAndUpdate(
-            {_id: tripId, 'gallery._id': galleryID},
-            {$set: updatedTripGallery},
-            {new: true}
-        ).exec();
-    });
-    
-    updateTripGalleryWithCallback(function (error, trip) {
-        if (error) {
-            res.status(400).json({message: error.message});
-        } else if (trip) {
-            const updatedEntry = trip.gallery.id(galleryID);
-            if (updatedEntry) {
-                res.status(200).json(updatedEntry);
-            } else {
-                res.status(404).json({message: 'Trip Gallery  not found'});
-            }
-        } else {
-            res.status(404).json({message: 'Trip not found'});
-        }
+const _updateGallery = function (trip, gallery, req) {
+    if (req.body.place) gallery.place = req.body.place;
+    if (req.body.picture) gallery.picture = req.body.picture;
+    return new Promise(resolve => {
+        resolve(trip);
     });
 }
 
-// Partial update by trip ID and gallery ID 
-const partialUpdateTripGallery = function (req, res) {
-    let tripId = req.params.tripId;
-    let entryId = req.params.galleryID;
+const _updateTrip = function (req, res, callback, STATUS_CODE) {
+    const tripId = req.params.id;
+    const galleryId = req.params.galleryID;
+    let response = _setDefaultResponse(STATUS_CODE, {});
     
-    const updateFields = {};
-    if (req.body.place) updateFields['gallery.$.place'] = req.body.place;
-    if (req.body.picture) updateFields['gallery.$.picture'] = req.body.picture;
-    
-    if (Object.keys(updateFields).length === 0) {
-        return res.status(400).json({message: 'No valid fields to update'});
+    if (!mongoose.isValidObjectId(tripId) || !mongoose.isValidObjectId(galleryId)) {
+        response.status = process.env.BAD_REQUEST_CODE;
+        response.data = { message: process.env.INVALID_TYPE_MESSAGE };
+        return _sendResponse(res, response);
     }
     
-    
-    const patchTripGalleryWithCallback = callbackify(function () {
-        return Trip.findOneAndUpdate(
-            {_id: tripId, 'gallery._id': entryId},
-            {$set: updateFields},
-            {new: true}
-        ).exec();
-    });
-    
-    patchTripGalleryWithCallback(function (error, trip) {
-        if (error) {
-            res.status(400).json({message: error.message});
-        } else if (trip) {
-            const updatedTripGallery = trip.gallery.id(entryId);
-            if (updatedTripGallery) {
-                res.status(200).json(updatedTripGallery);
-            } else {
-                res.status(404).json({message: 'Trip Gallery  not found'});
-            }
-        } else {
-            res.status(404).json({message: 'Trip not found'});
-        }
-    });
+    _findTripById(tripId)
+    .then(trip => _getIfFoundTrip(trip))
+    .then(trip => callback(trip, trip.gallery.id(galleryId), req))
+    .then(trip => _saveTrip(trip))
+    .then(trip => response.data = trip)
+    .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, { message: error.message }))
+    .finally(() => _sendResponse(res, response));
 }
 
-// Delete a gallery  by trip ID and entry ID
-const deleteTripGallery = function (req, res) {
-    let tripId = req.params.tripId;
-    let galleryID = req.params.galleryID;
-    const deleteTripGalleryWithCallback = callbackify(function () {
-        return Trip.findByIdAndUpdate(
-            tripId,
-            {$pull: {gallery: {_id: galleryID}}},
-            {new: true}
-        ).exec();
-    });
+const getTripGallerys = function (req, res) {
     
-    deleteTripGalleryWithCallback(function (error, trip) {
-        if (error) {
-            res.status(400).json({message: error.message});
-        } else if (trip) {
-            res.status(200).json({message: 'Trip Gallery deleted'});
-        } else {
-            res.status(404).json({message: 'Trip not found'});
-        }
-    });
+    const tripId = req.params.id;
+    let response = _setDefaultResponse(process.env.GET_SUCCESS_CODE, {});
+    
+    if (!mongoose.isValidObjectId(tripId)) {
+        _setErrorResponse(response, process.env.BAD_REQUEST_CODE, process.env.INVALID_TYPE_MESSAGE);
+        return _sendResponse(res, response);
+    }
+    
+    _findTripById(tripId)
+    .then(trip => _getIfFoundTrip(trip))
+    .then(trip => response.data = trip.gallery)
+    .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, { message: error.message }))
+    .finally(() => _sendResponse(res, response));
+}
+
+const addTripGallery = function (req, res) {
+    const tripId = req.params.id;
+    const newGallery = _createNewGalleryObject(req);
+    let response = _setDefaultResponse(process.env.POST_CODE, {});
+    
+    if (!mongoose.isValidObjectId(tripId)) {
+        _setErrorResponse(response, process.env.BAD_REQUEST_CODE, process.env.INVALID_TYPE_MESSAGE);
+        return _sendResponse(res, response);
+    }
+    
+    _findTripById(tripId)
+    .then(trip => _getIfFoundTrip(trip))
+    .then(trip => _addGalleryToTrip(trip, newGallery))
+    .then(trip => _saveTrip(trip))
+    .then(trip => response.data = trip.gallery[trip.gallery.length - 1])
+    .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, { message: error.message }))
+    .finally(() => _sendResponse(res, response));
+}
+
+const getTripGallery = function (req, res) {
+    const tripId = req.params.id;
+    const galleryId = req.params.galleryID;
+    console.log(tripId);
+    console.log(galleryId);
+    
+    let response = _setDefaultResponse(process.env.GET_SUCCESS_CODE, {});
+    
+    if (!mongoose.isValidObjectId(tripId) || !mongoose.isValidObjectId(galleryId)) {
+        _setErrorResponse(response, process.env.BAD_REQUEST_CODE, process.env.INVALID_TYPE_MESSAGE);
+        return _sendResponse(res, response);
+    }
+    
+    _findTripById(tripId)
+    .then(trip => _getIfFoundTrip(trip))
+    .then(trip => _getIfFoundGallery(trip.gallery.id(galleryId)))
+    .then(gallery => response.data = gallery)
+    .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, { message: error.message }))
+    .finally(() => _sendResponse(res, response));
+}
+
+const updateTripGallery = function (req, res) {
+    _updateTrip(req, res, _updateGallery, process.env.PUT_CODE);
+}
+
+const partialUpdateTripGallery = function (req, res) {
+    _updateTrip(req, res, _updateGallery, process.env.PUT_CODE);
+}
+
+const deleteTripGallery = function (req, res) {
+    const tripId = req.params.id;
+    const galleryId = req.params.galleryID;
+    let response = _setDefaultResponse(process.env.DELETE_CODE, {});
+    
+    if (!mongoose.isValidObjectId(tripId) || !mongoose.isValidObjectId(galleryId)) {
+        _setErrorResponse(response, process.env.BAD_REQUEST_CODE, process.env.INVALID_TYPE_MESSAGE);
+        return _sendResponse(res, response);
+    }
+    
+    _findTripById(tripId)
+    .then(trip => _getIfFoundTrip(trip))
+    .then(trip => _deleteGalleryFromTrip(trip, galleryId))
+    .then(trip => _saveTrip(trip))
+    .then(() => response.data = { message: 'Trip Gallery deleted' })
+    .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, { message: error.message }))
+    .finally(() => _sendResponse(res, response));
 }
 
 module.exports = {

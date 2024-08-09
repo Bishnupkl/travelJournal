@@ -58,7 +58,7 @@ export class TripsDataService {
   
   constructor(private _httpClient:HttpClient) { }
   
-  baseUrl:string='http://localhost:3000/';
+  baseUrl:string='http://localhost:3000/api/';
   
   getTrips(pageNumber:number):Observable<Trip[]>{
     const url:string=this.baseUrl+"trips?pageNumber="+pageNumber;
