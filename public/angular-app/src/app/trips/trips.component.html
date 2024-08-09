@@ -1,0 +1,8 @@
+<ul>
+    <li *ngFor="let trip of trips">
+        <a routerLink="/trip/{{trip._id}}">{{trip.country}}</a><button (click)="deleteClick(trip._id)">Delete</button>
+    </li>
+</ul>
+<button (click)="previousClicked()" [disabled]="isPreviousDisabled()"> Previous</button>
+{{pageNumber}}
+<button (click)="nextClicked()" [disabled]="isNextClicked==false">Next</button>

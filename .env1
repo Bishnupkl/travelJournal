@@ -1,5 +1,4 @@
 PORT = 3000
-SERVER_MSG="Server is running on port"
 
 # Database Connection
 MONGO_URI = "mongodb://localhost:27017"
@@ -7,42 +6,24 @@ DB_NAME= 'traveljournal'
 TRIP_MODEL='Trip'
 TRIP_Collection='trips'
 
-
-USER_MODEL='User',
-USER_COLLECTION='users',
-
 #Log Messgae
 DB_CONNECT="Mongoose connected to"
 DB_DISCONNECT="Mongoose disconnected to"
 DB_CONNECT_ERROR="Mongoose Error"
-DB_CONNECT_PROBLEM="Somthing problem with Mongoose connection"
 
-
-DB_CONNECTED_METHOD='connected'
-DB_DICONNECTED_METHOD='disconnected'
-DB_EORROR_METHOD='error'
-
-DB_ON_SIGINT_METHOD='SIGINT'
-DB_ON_SIGTERM_METHOD='SIGTERM'
-DB_ON_SIGURS2_METHOD='SIGURS2'
+SERVER_MSG="Server is running on port"
 
 #Filtering the collection
 DECIMAL_VALUE = 10
-LIMIT =15
-COUNT =10
+LIMIT =7
 OFFSET =0
-MAX_DISTANCE = 100000
-MIN_DISTANCE = 1000
 
 #URL
 SUB_SET_ROUTE = '/api'
-EMPTY_URL = '/api'
 URL_TRIPS='/trips'
 URL_TRIPS_WITH_ID='/trips/:id'
 URL_GALLERY='/gallery'
 URL_GALLERY_WITH_ID='/gallery/:galleryID'
-URL_USERS='/users'
-URL_USERS_LOGIN='/login'
 
 
 
@@ -53,10 +34,8 @@ PUT_SUCCESS_CODE=201
 PATCH_SUCCESS_CODE=201
 DELETE_SUCCESS_CODE=201
 BAD_REQUEST_CODE=404
-INVALID_AUTHERIZED_CODE=401
-USER_EXISTED=403
 NOT_FOUND_CODE=404
-SOMETHING_WRONG_CODE=500
+SOMETHING_WRONG=500
 
 #RESPONSE
 CODE_400_MESSAGE='Bad Requested!'
@@ -68,10 +47,3 @@ OFFSET_COUNT_MUST_BE_NUMBER = 'Offset and Count must be a number!'
 ALREADY_EXISTED = 'Already Existed!';
 
 
-
-# CORS
-ACCESS_CONTROL_ALLOW_ORIGIN_HEADER= "Access-Control-Allow-Origin"
-ACCESS_CONTROL_ALLOW_ORIGIN_WEBSITES= "http://localhost:4200"
-
-#JWT
-JWT_SECRET='MWA-72'
