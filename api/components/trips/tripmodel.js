@@ -15,5 +15,6 @@ const tripSchema = new Schema({
   gallery: [gallerySchema] // Array of gallery documents
 });
 
-const Trip = mongoose.model('Trip', tripSchema);
-module.exports = Trip;
+const TRIP_MODEL = process.env.TRIP_MODEL;
+const TRIP_COLLECTION = process.env.TRIP_COLLECTION;
+mongoose.model(TRIP_MODEL, tripSchema, TRIP_COLLECTION);

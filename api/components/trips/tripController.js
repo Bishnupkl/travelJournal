@@ -98,6 +98,7 @@ const _updateTrip = function (req, res, updateCallback, statusCode) {
 };
 
 const getAllTrips = function (req, res) {
+    console.log("calling here");
     let offset = parseInt(req.query.offset) || 0;
     let limit = parseInt(req.query.limit) || 5;
     let pageNumber = req.query.pageNumber;
@@ -130,6 +131,8 @@ const createTrip = function (req, res) {
 };
 
 const findTripById = function (req, res) {
+    console.log("find is called");
+    
     let tripId = req.params.id;
     let response = _setDefaultResponse(process.env.GET_SUCCESS_CODE, {});
 
@@ -147,6 +150,7 @@ const findTripById = function (req, res) {
 };
 
 const deleteTripById = function (req, res) {
+    console.log("Delete trip is called");
     let tripId = req.params.id;
     let response = _setDefaultResponse(process.env.DELETE_SUCCESS_CODE, {});
 

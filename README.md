@@ -35,6 +35,3 @@ To Run this project need to do as following:
 
 
 
-mongoimport --uri="mongodb://localhost:27017" --db yourDatabaseName --collection yourCollectionName --file /path/to/yourfile.json --jsonArray
-mongoexport --uri="mongodb://localhost:27017" --db yourDatabaseName --collection yourCollectionName --out /path/to/outputfile.json --jsonArray
-mongorestore --uri="mongodb://localhost:27017" --db meanGames --collection games  games.bson
