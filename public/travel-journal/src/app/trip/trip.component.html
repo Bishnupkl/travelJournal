@@ -1,0 +1,19 @@
+<div id="about">
+  <h1 class="title">Trip Details</h1>
+  <div class="about_row">
+    <div class="about_column">
+      <p><b>Country</b>: {{trip.hotel}}</p>
+      <p><b>Airport</b>: {{trip.airport}}</p>
+      <p><b>Hotel</b>: {{trip.hotel}}</p>
+
+      <span *ngIf="isLoggedIn()">
+                <button class="btn2 btn btn-success" (click)="update()">Update</button>
+                <button class="btn2" (click)="delete()">Delete</button>
+            </span>
+    </div>
+    <div class="about_column">
+    </div>
+  </div>
+  <app-galleries [galleries]="trip.gallery" ></app-galleries>
+
+</div>

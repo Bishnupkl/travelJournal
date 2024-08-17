@@ -1,0 +1,14 @@
+<div class="formInMiddle">
+  <h1 class="heading">Create Trip
+  </h1>
+
+  <form class="forms" (ngSubmit)="update()" #tripForm="ngForm">
+    <input type="text" name="country" class="inp_box" placeholder="Country" [(ngModel)]="trip.country">
+    <input type="text" name="hotel" class="inp_box" placeholder="Hotel" [(ngModel)]="trip.hotel">
+    <input type="text" name="airport" class="inp_box" placeholder="Airport" [(ngModel)]="trip.airport">
+    <button class="btn2" type="submit">Update</button>
+    <div *ngIf="isUpdateFail" class="alert alert-danger">
+      {{ updateFailMessage }}
+    </div>
+  </form>
+</div>

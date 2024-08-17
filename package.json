@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "startBackend": "nodemon --inspect",
-    "startFrontend": "cd ./public/angular-app && npm start",
+    "startFrontend": "cd ./public/travel-journal && npm start",
     "start": "npm run startBackend | npm run startFrontend",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -9,7 +9,7 @@ const userModelFind = function (offset, count) {
     return userModel.find().skip(offset).limit(count);
 }
 
-const userModelCreate = function (userObject) {
+const createNewUser = function (userObject) {
     return userModel.create(userObject)
 }
 
@@ -27,19 +27,17 @@ const _ifFoundAnyUsers = function (users) {
 }
 
 
-const userModelFindByFieldWith = function (searchCriteriaObject) {
+const userModelFindByUsername = function (searchCriteriaObject) {
     return userModel.findOne(searchCriteriaObject).exec();
 }
 
-const _createHashBcrypt = function (password, saltSeed) {
-    console.log('hash created')
+const _createHashedPasswordWithBcrypt = function (password, salt) {
     return new Promise((resolve, rejects) => {
-        resolve(bcrypt.hash(password, saltSeed));
+        resolve(bcrypt.hash(password, salt));
     })
 }
 
-const _createUserObject = function (req, password) {
-    console.log('create user object');
+const _createNewUserObject = function (req, password) {
     return new Promise((resolve, rejects) => {
         const newUser = {
             name: req.body.name,
@@ -58,28 +56,27 @@ const _setDefaultResponse = function (statusCode, data) {
 }
 
 const _sendResponse = function (res, response) {
-    
+
     res.status(Number(response.status)).json(response.data)
 }
 
 const _setErrorResponse = function (response, status, error) {
-    console.log('set error response');
     response.status = status;
-    response.data = { message: error };
+    response.data = {message: error};
 }
 
 const getUsers = function (req, res) {
     let count = process.env.OFFSET;
     let offset = process.env.OFFSET;
-    let limit = process.env.LIMIT;;
+    let limit = process.env.LIMIT;
+    ;
 
     let response = _setDefaultResponse(process.env.GET_SUCCESS_CODE, {})
 
     if (req.query && req.query.offset) {
         if (isNaN(req.query.offset) == true) {
             _setErrorResponse(response, process.env.BAD_REQUEST_CODE, process.env.OFFSET_COUNT_MUST_BE_NUMBER_MESSAGE)
-        }
-        else {
+        } else {
             offset = parseInt(req.query.offset);
         }
     }
@@ -87,8 +84,7 @@ const getUsers = function (req, res) {
     if (req.query && req.query.limit) {
         if (isNaN(req.query.limit) == true) {
             _setErrorResponse(response, process.env.BAD_REQUEST_CODE, process.env.OFFSET_COUNT_MUST_BE_NUMBER_MESSAGE)
-        }
-        else {
+        } else {
             limit = parseInt(req.query.limit);
             if (count > limit) {
                 _setErrorResponse(response, process.env.BAD_REQUEST_CODE, process.env.OVER_LIMIT_MESSAGE)
@@ -105,8 +101,7 @@ const getUsers = function (req, res) {
         .finally(() => _sendResponse(res, response));
 }
 
-const _ifUsernameTaken = function (username) {
-    console.log('check username if exist');
+const _ifUserAlreadyExists = function (username) {
     const error = {
         status: process.env.USER_EXISTED,
         message: process.env.ALREADY_EXISTED
@@ -128,16 +123,18 @@ const createUser = function (req, res) {
     if (response.status != process.env.POST_SUCCESS_CODE) {
         _sendResponse(res, response)
     }
-    userModelFindByFieldWith({ username: req.body.username })
-        .then(user => _ifUsernameTaken(user))
-        .then(() => bcrypt.genSalt(process.env.SALT_SET))
-        .then(saltSeed => _createHashBcrypt(req.body.password, saltSeed))
-        .then(hashedPassword => _createUserObject(req, hashedPassword))
-        .then(createdUserObject => userModelCreate(createdUserObject))
-        .then(createdUser => response.data = createdUser)
-        .catch(error => { _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG, error.message) })
-        .finally(() => _sendResponse(res, response));
 
+    userModelFindByUsername({username: req.body.username})
+        .then(user => _ifUserAlreadyExists(user))
+        .then(() => bcrypt.genSalt(process.env.SALT_SET))
+        .then(saltValue => _createHashedPasswordWithBcrypt(req.body.password, saltValue))
+        .then(hashedPassword => _createNewUserObject(req, hashedPassword))
+        .then(newUserObject => createNewUser(newUserObject))
+        .then(createdUser => response.data = createdUser)
+        .catch(error => {
+            _setErrorResponse(response, error.status != undefined ? error.status : process.env.SOMETHING_WRONG, error.message)
+        })
+        .finally(() => _sendResponse(res, response));
 }
 
 module.exports = {

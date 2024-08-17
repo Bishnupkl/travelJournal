@@ -4,8 +4,8 @@ require('dotenv').config();
 const TRIP_MODEL = process.env.TRIP_MODEL;
 const Trip = mongoose.model(TRIP_MODEL);
 
-const tripModelFindSkipLimitExec = function (offset, limit) {
-    return Trip.find().skip(offset).limit(limit).exec();
+const tripModelFindSkipLimitExec = function (query,offset, limit) {
+    return Trip.find(query).skip(offset).limit(limit).exec();
 };
 
 const tripModelFindByIdExec = function (tripId) {
@@ -93,25 +93,38 @@ const _updateTrip = function (req, res, updateCallback, statusCode) {
         .then(trip => updateCallback(req, trip))
         .then(trip => tripSave(trip))
         .then(trip => response.data = trip)
-        .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, { message: error.message }))
+        .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, {message: error.message}))
         .finally(() => _sendResponse(res, response));
 };
 
 const getAllTrips = function (req, res) {
-    console.log("calling here");
-    let offset = parseInt(req.query.offset) || 0;
-    let limit = parseInt(req.query.limit) || 5;
-    let pageNumber = req.query.pageNumber;
+    let offset = parseInt(req.query.offset) || process.env.OFFSET;
+    let limit = parseInt(req.query.limit) || process.env.LIMIT;
     let response = _setDefaultResponse(process.env.GET_SUCCESS_CODE, []);
+    let query = {};
 
-    if (pageNumber > 1) {
-        offset = limit * (pageNumber - 1);
+    if (req.query && req.query.name) {
+        query = { country: new RegExp(req.query.name, 'i') }
     }
 
-    tripModelFindSkipLimitExec(offset, limit)
+    if (req.query && req.query.pageNumber) {
+        if (isNaN(req.query.pageNumber) == true) {
+            _setErrorResponse(response, process.env.BAD_REQUEST_CODE, process.env.OFFSET_COUNT_MUST_BE_NUMBER_MESSAGE)
+        }
+        else {
+            pageNumber = parseInt(req.query.pageNumber);
+        }
+        if (pageNumber > 1) {
+            offset = limit * (pageNumber - 1);
+        }
+    }
+
+
+
+    tripModelFindSkipLimitExec(query,offset, limit)
         .then(trips => _ifFoundAnyTrips(trips))
         .then(trips => response.data = trips)
-        .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, { message: error.message }))
+        .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, {message: error.message}))
         .finally(() => _sendResponse(res, response));
 };
 
@@ -126,13 +139,12 @@ const createTrip = function (req, res) {
 
     tripModelCreate(trip)
         .then(createdTrip => response.data = createdTrip)
-        .catch(error => _setErrorResponse(response, process.env.BAD_REQUEST_CODE, { message: error.message }))
+        .catch(error => _setErrorResponse(response, process.env.BAD_REQUEST_CODE, {message: error.message}))
         .finally(() => _sendResponse(res, response));
 };
 
 const findTripById = function (req, res) {
-    console.log("find is called");
-    
+
     let tripId = req.params.id;
     let response = _setDefaultResponse(process.env.GET_SUCCESS_CODE, {});
 
@@ -145,12 +157,11 @@ const findTripById = function (req, res) {
     tripModelFindByIdExec(tripId)
         .then(trip => _ifFoundATrip(trip))
         .then(trip => response.data = trip)
-        .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, { message: error.message }))
+        .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, {message: error.message}))
         .finally(() => _sendResponse(res, response));
 };
 
 const deleteTripById = function (req, res) {
-    console.log("Delete trip is called");
     let tripId = req.params.id;
     let response = _setDefaultResponse(process.env.DELETE_SUCCESS_CODE, {});
 
@@ -163,17 +174,33 @@ const deleteTripById = function (req, res) {
     tripModelFindByIdAndDeleteExec(tripId)
         .then(deletedTrip => _ifFoundATrip(deletedTrip))
         .then(deletedTrip => response.data = deletedTrip)
-        .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, { message: error.message }))
+        .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, {message: error.message}))
         .finally(() => _sendResponse(res, response));
 };
 
 const fullUpdateTripById = function (req, res) {
-    _updateTrip(req, res, _fullUpdate, process.env.PATCH_SUCCESS_CODE);
+    _updateTrip(req, res, _fullUpdate, process.env.PUT_SUCCESS_CODE);
 };
 
 const partialUpdateTripById = function (req, res) {
     _updateTrip(req, res, _partialUpdate, process.env.PATCH_SUCCESS_CODE);
 };
+
+const tripModelFindAndCountExec = function (query) {
+    return Trip.find(query).countDocuments();
+}
+const getTotalTripsCount = function (req, res) {
+    let response = _setDefaultResponse(process.env.GET_SUCCESS_CODE, {})
+    let query = {};
+    if (req.query && req.query.name) {
+        query = { country: new RegExp(req.query.name, 'i') }
+    }
+
+    tripModelFindAndCountExec(query)
+        .then(totalTrips => response.data = totalTrips)
+        .catch(error => _setErrorResponse(response, error.status || process.env.SOMETHING_WRONG_CODE, {message: error.message}))
+        .finally(() => _sendResponse(res, response));
+}
 
 module.exports = {
     getAllTrips,
@@ -181,5 +208,6 @@ module.exports = {
     findTripById,
     deleteTripById,
     fullUpdateTripById,
-    partialUpdateTripById
+    partialUpdateTripById,
+    getTotalTripsCount
 };

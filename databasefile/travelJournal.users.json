@@ -1,0 +1,18 @@
+[{
+  "_id": {
+    "$oid": "66bfb05865f14c2bda4ceffe"
+  },
+  "username": "bishnu",
+  "name": "bishnu",
+  "password": "$2a$10$mf2SeQA4cV3Yu2tkusz1c.TlB5PCZTlO8R2pTeRngwM4wCS27ct42",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66bfb08065f14c2bda4cf001"
+  },
+  "username": "najeeb",
+  "name": "najeeb",
+  "password": "$2a$10$M3mxun3HEOo2SgdCR/.iEu8iguGKq5yPa3sm38eaYfIucNa9eKB2q",
+  "__v": 0
+}]

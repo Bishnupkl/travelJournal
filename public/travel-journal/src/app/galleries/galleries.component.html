@@ -1,0 +1,20 @@
+<div id="galleriesPage">
+  <div class="heading">
+    <h1 *ngIf="galleries">{{galleries.length | filter }}</h1>
+    <button *ngIf="isLoggedIn()" class="btn2" (click)="addNewGallery()">Add New Gallery</button>
+
+  </div>
+  <div class="card" *ngFor="let gallery of galleries">
+    <img src="{{gallery.picture}}">
+    <div class="details">
+      <div class="details-sub">
+        <h5>{{gallery.place}}</h5>
+      </div>
+
+      <span *ngIf="isLoggedIn()">
+                <button class="btn btn-success" (click)="update(gallery._id)">Update</button>
+                <button class="btn2" (click)="delete(gallery._id)">Delete</button>
+            </span>
+    </div>
+  </div>
+</div>
