@@ -1,0 +1,12 @@
+<div id="order">
+  <h1 class="heading">Update Gallery
+  </h1>
+  <form (ngSubmit)="update()" #galleryForm="ngForm" class="forms">
+    <input type="text" name="place" class="inp_box" placeholder="Place" [(ngModel)]="gallery.place">
+    <input type="text" name="price" class="inp_box" placeholder="Picture Url" [(ngModel)]="gallery.picture">
+    <button class="btn2" type="submit">Submit</button>
+    <div *ngIf="isUpdateFail" class="alert alert-danger">
+      {{updateFailMessage}}
+    </div>
+  </form>
+</div>

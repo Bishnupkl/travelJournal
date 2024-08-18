@@ -1,0 +1,30 @@
+<div id="menu">
+  <div class="heading">
+    <h1>Trips</h1>
+    <input type="text" class="inp_box" [(ngModel)]="searchQuery" placeholder="Search trip with country name">
+    <button class="loginButton" (click)="searchTrips()">Search</button>
+    <h3 class='error' *ngIf="isError">{{ errorMessage }}</h3>
+  </div>
+    <div class="card" *ngFor="let trip of trips">
+      <div *ngIf="trips && trips.length">
+      <a class='tripDetails' routerLink="/trip/{{trip._id}}">
+        <img
+          src="https://media.istockphoto.com/id/904172104/photo/weve-made-it-all-this-way-i-am-proud.jpg?s=612x612&w=0&k=20&c=MewnsAhbeGRcMBN9_ZKhThmqPK6c8nCT8XYk5ZM_hdg=">
+        <div class="details">
+          <div class="details-sub">
+            <h5>{{ trip.country }},</h5>
+          </div>
+          <p>Airport:{{ trip.airport }}</p>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div *ngIf="trips && trips.length==0" class="alert alert-danger">
+    <h5>{{ tripsNotFound }}</h5>
+  </div>
+</div>
+<div *ngIf="trips && trips.length" class="pagination">
+  <button class="btn-sm" (click)="previousClicked()" [disabled]="isPreviousDisabled"> Previous</button>
+  <label> {{ page }}/{{ total_page }}</label>
+  <button class="btn-sm" (click)="nextClicked()" [disabled]="isNextDisabled">Next</button>
+</div>

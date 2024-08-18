@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "startBackend": "nodemon --inspect",
-    "startFrontend": "cd ./public/angular-app && npm start",
+    "startFrontend": "cd ./public/travel-journal && npm start",
     "start": "npm run startBackend | npm run startFrontend",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,8 +15,10 @@
   "author": "Bishnu Pokhrel",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.1"
   },
   "devDependencies": {

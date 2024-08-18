@@ -1,0 +1,21 @@
+<div class="formInMiddle">
+  <h1 class="heading">Register New User</h1>
+  <form class="forms" [formGroup]="registrationForm" (ngSubmit)="register()" >
+
+      <input name="name" class="inp_box" id="name" formControlName="name" placeholder="Your name">
+
+
+      <input name="username" class="inp_box" id="username" formControlName="username" placeholder="Username">
+
+
+      <input type="password" name="password" formControlName="password" class="inp_box" id="password" placeholder="Password">
+
+
+      <input type="password" name="passwordRepeat" formControlName="passwordRepeat" class="inp_box" id="passwordRepeat" placeholder="Confirm Password">
+
+    <button  class="btn2" type="submit">Register</button>
+    <div *ngIf="isNotRegistered" class="alert alert-danger">
+      {{errorMessage}}
+    </div>
+  </form>
+</div>

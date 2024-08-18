@@ -5,8 +5,7 @@ const TRIP_MODEL = process.env.TRIP_MODEL;
 const Trip = mongoose.model(TRIP_MODEL);
 
 const _findTripById = function (id) {
-    console.log(id);
-    
+
     return Trip.findById(id).exec();
 }
 
@@ -46,7 +45,6 @@ const _setErrorResponse = function (response, statusCode, message) {
 }
 
 const _sendResponse = function (res, response) {
-    console.log(response);
     res.status(parseInt(response.status)).json(response.data);
 }
 
@@ -119,7 +117,7 @@ const getTripGallerys = function (req, res) {
 const addTripGallery = function (req, res) {
     const tripId = req.params.id;
     const newGallery = _createNewGalleryObject(req);
-    let response = _setDefaultResponse(process.env.POST_CODE, {});
+    let response = _setDefaultResponse(process.env.POST_SUCCESS_CODE, {});
     
     if (!mongoose.isValidObjectId(tripId)) {
         _setErrorResponse(response, process.env.BAD_REQUEST_CODE, process.env.INVALID_TYPE_MESSAGE);
@@ -138,8 +136,7 @@ const addTripGallery = function (req, res) {
 const getTripGallery = function (req, res) {
     const tripId = req.params.id;
     const galleryId = req.params.galleryID;
-    console.log(tripId);
-    console.log(galleryId);
+
     
     let response = _setDefaultResponse(process.env.GET_SUCCESS_CODE, {});
     
@@ -157,17 +154,17 @@ const getTripGallery = function (req, res) {
 }
 
 const updateTripGallery = function (req, res) {
-    _updateTrip(req, res, _updateGallery, process.env.PUT_CODE);
+    _updateTrip(req, res, _updateGallery, process.env.PUT_SUCCESS_CODE);
 }
 
 const partialUpdateTripGallery = function (req, res) {
-    _updateTrip(req, res, _updateGallery, process.env.PUT_CODE);
+    _updateTrip(req, res, _updateGallery, process.env.PATCH_SUCCESS_CODE);
 }
 
 const deleteTripGallery = function (req, res) {
     const tripId = req.params.id;
     const galleryId = req.params.galleryID;
-    let response = _setDefaultResponse(process.env.DELETE_CODE, {});
+    let response = _setDefaultResponse(process.env.DELETE_SUCCESS_CODE, {});
     
     if (!mongoose.isValidObjectId(tripId) || !mongoose.isValidObjectId(galleryId)) {
         _setErrorResponse(response, process.env.BAD_REQUEST_CODE, process.env.INVALID_TYPE_MESSAGE);
